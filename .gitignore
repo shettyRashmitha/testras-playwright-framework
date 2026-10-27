@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Playwright output
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Saved login sessions (contain session cookies)
+.auth/
+
+# Secrets: ignore every .env file except the template
+.env*
+!.env.example
+
+# Editor and OS files
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
