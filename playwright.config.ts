@@ -4,7 +4,9 @@ import { defineConfig, devices } from '@playwright/test';
 // and loads that environment's settings and secrets. Any problem stops the run
 // here, before a single test starts.
 import { testEnvConfig } from './src/config/testEnvConfig';
-
+// Builds each role's session file path, e.g. .auth/demo/admin.json.
+// The same helper auth.setup.ts uses to SAVE the session, so the paths always match.
+import { authFile } from './src/config/authFile';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -33,20 +35,32 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
-
-  /* Configure projects for major browsers */
+//configure projects for browser
   projects: [
+    // 1. Runs FIRST: logs in once per role and saves each session to .auth/<env>/<role>.json.
+    //    Matches only *.setup.ts files, so normal tests never run in this project.
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+
+    // 2. Browser projects. "dependencies: ['setup']" makes Playwright run the setup
+    //    project before them, on every run. "storageState" loads the saved admin
+    //    session into each test's browser, so tests start already logged in.
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], storageState: authFile('admin') },
+      dependencies: ['setup'],
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: { ...devices['Desktop Firefox'], storageState: authFile('admin') },
+      dependencies: ['setup'],
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { ...devices['Desktop Safari'], storageState: authFile('admin') },
+      dependencies: ['setup'],
     },
   ],
 });
