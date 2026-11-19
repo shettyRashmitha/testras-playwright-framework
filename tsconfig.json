@@ -21,7 +21,7 @@
       "@api/*": ["./src/api/*"],
       "@app/*": ["./src/applications/*"],
       "@shared/*": ["./src/shared/*"],
-      "@fixtures": ["./src/fixtures/index.ts"]
+      "@fixtures": ["./src/fixtures/testFixtures.ts"]
     }
   },
   "include": ["src/**/*.ts", "tests/**/*.ts", "playwright.config.ts"]
